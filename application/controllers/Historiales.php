@@ -7,7 +7,7 @@ require APPPATH . 'libraries/REST_Controller.php';
 /**
  * @author          Moisés Herrera
  */
-class Expedientes extends REST_Controller {
+class Historiales extends REST_Controller {
 
     function __construct()
     {
@@ -16,21 +16,22 @@ class Expedientes extends REST_Controller {
 
         // Configure limits on our controller methods
         // Ensure you have created the 'limits' table and enabled 'limits' within application/config/rest.php
-        $this->methods['expedientes_get']['limit'] = 500; // 500 requests per hour per user/key
+        $this->methods['historiales_get']['limit'] = 500; // 500 requests per hour per user/key
     }
 
-    public function expedientes_get()
+    public function historiales_get()
     {
         $this->load->model('Expedientes_model');
         //http://localhost/restserver/index.php/users/users/id/1
         // Users from a data store e.g. database
         $numero = $this->get('numero');
-        $exps = $this->Expedientes_model->buscarExpediente();
+        $id_historial = $this->get('id');
+        $exps = $this->Expedientes_model->buscarHistoriales($numero);
 
 
         // If the id parameter doesn't exist return all the users
 
-        if ($numero === NULL)
+        if ($id_historial === NULL)
         {
             // Check if the users data store contains users (in case the database result returns NULL)
             if ($exps)
@@ -50,10 +51,10 @@ class Expedientes extends REST_Controller {
 
         // Find and return a single record for a particular user.
 
-        $numero = (int) $numero;
+        $id_historial = (int) $id_historial;
 
         // Validate the id.
-        if ($numero <= 0)
+        if ($id_historial <= 0)
         {
             // Invalid id, set the response and exit.
             $this->response(NULL, REST_Controller::HTTP_BAD_REQUEST); // BAD_REQUEST (400) being the HTTP response code
@@ -68,7 +69,7 @@ class Expedientes extends REST_Controller {
         {
             foreach ($exps as $ex)
             {
-                if ($ex->numero_expediente == $numero)
+                if ($ex->id_historial == $id_detalle_expediente)
                 {
                     $exp = $ex;
                 }
