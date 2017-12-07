@@ -7,7 +7,7 @@ require APPPATH . 'libraries/REST_Controller.php';
 /**
  * @author          Moisés Herrera
  */
-class Expedientes extends REST_Controller {
+class Compras extends REST_Controller {
 
     function __construct()
     {
@@ -16,16 +16,16 @@ class Expedientes extends REST_Controller {
 
         // Configure limits on our controller methods
         // Ensure you have created the 'limits' table and enabled 'limits' within application/config/rest.php
-        $this->methods['expedientes_get']['limit'] = 500; // 500 requests per hour per user/key
+        $this->methods['compras_get']['limit'] = 500; // 500 requests per hour per user/key
     }
 
-    public function expedientes_get()
+    public function compras_get()
     {
-        $this->load->model('Expedientes_model');
+        $this->load->model('Compras_model');
         //http://localhost/restserver/index.php/users/users/id/1
         // Users from a data store e.g. database
         $numero = $this->get('numero');
-        $exps = $this->Expedientes_model->buscarExpediente();
+        $arvs = $this->Compras_model->buscarAntiretrovirales();
 
 
         // If the id parameter doesn't exist return all the users
@@ -33,17 +33,17 @@ class Expedientes extends REST_Controller {
         if ($numero == NULL)
         {
             // Check if the users data store contains users (in case the database result returns NULL)
-            if ($exps)
+            if ($arvs)
             {
                 // Set the response and exit
-                $this->response($exps, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
+                $this->response($arvs, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
             }
             else
             {
                 // Set the response and exit
                 $this->response([
                     'status' => FALSE,
-                    'message' => 'No se encontraron expedientes'
+                    'message' => 'No se encontraron compras de ARV'
                 ], REST_Controller::HTTP_NOT_FOUND); // NOT_FOUND (404) being the HTTP response code
             }
         }
@@ -62,28 +62,28 @@ class Expedientes extends REST_Controller {
         // Get the user from the array, using the id as key for retrieval.
         // Usually a model is to be used for this.
 
-        $exp = NULL;
+        $arv = NULL;
 
-        if (!empty($exps))
+        if (!empty($arvs))
         {
-            foreach ($exps as $ex)
+            foreach ($arvs as $ar)
             {
-                if ($ex->numero_expediente == $numero)
+                if ($ar->id_antiretrovirales == $numero)
                 {
-                    $exp = $ex;
+                    $arv = $ar;
                 }
             }
         }
 
-        if (!empty($exp))
+        if (!empty($arv))
         {
-            $this->set_response($exp, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
+            $this->set_response($arv, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
         }
         else
         {
             $this->set_response([
                 'status' => FALSE,
-                'message' => 'Expediente no pudo ser encontrado'
+                'message' => 'Compras de ARV no pudieron ser encontradas'
             ], REST_Controller::HTTP_NOT_FOUND); // NOT_FOUND (404) being the HTTP response code
         }
     }
